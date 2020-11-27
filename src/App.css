@@ -13,3 +13,51 @@
   color: white;
 }
 
+.btn {
+  margin-left: 10px;
+  text-align: center;
+}
+.minutes {
+  cursor: pointer;
+}
+
+input {
+  border: 0px solid blue;
+  display: inline-block;
+  box-sizing: inherit;
+  margin: 0;
+  padding: 0;
+  width: 1.3em;
+  line-height: inherit;
+  vertical-align: inherit;
+  text-align: right;
+  color: inherit;
+  font: inherit;
+  background: none;
+}
+
+input[disabled] {
+  border: 0;
+}
+
+.session-border{
+  border-right: 2px solid white;
+  width: 20%;
+  height: 100%;
+  position: fixed;
+  left: 5px;
+  word-wrap: break-word;
+  
+}
+.session-header {
+  position: absolute;
+  top:10%;
+  left: 2%;
+  border-bottom: 3px solid white;
+  
+}
+.sessions{
+  position: absolute;
+  top:20%;
+  left: 2%;
+}
