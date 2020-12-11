@@ -16,24 +16,89 @@ function App() {
   );
 }
 
+// Format ending and starting time HH/MM by getting Date object
+// This could be in a util file
+function getHHMM(date){
+  if (!date){
+    return null;
+  }
+  let hh = date.getHours();
+  let mm = date.getMinutes();
+
+  if (mm < 10){
+    mm = "0" + mm;
+  }
+  if (hh < 10){
+    hh = "0" + hh;
+  }
+  return hh + ":" + mm;
+}
+
+function getDDMMYYYY(date){
+  if (!date){
+    return null;
+  }
+  let dd = date.getDate();
+  let mm = date.getMonth();
+  let yyyy = date.getFullYear();
+
+  if (dd < 10){
+    dd = "0" + dd;
+  }
+  if (mm < 10){
+    mm = "0" +mm
+  }
+  return dd + "/" + mm + "/" + yyyy;
+}
+
+const today = getDDMMYYYY(new Date());
+
 function HelloWorld(){
   return <h1>Hello world!</h1>
 }
 
 function Sessions(){
-  const [sessions, setSessions] = useState(localStorage.getItem("sessions"));
-  let session_prototype = {"date": [
-     {"session_time": "30", 
+  // This components gets session data from localStorage and displays it
+
+  const [sessions, setSessions] = useState(localStorage.getItem(today));
+
+  // After each session I need to retrieve local storage and push the new session to it
+  // Then after updating I need to set updated storage again. 
+  // I may need a new Date object for retrieving Today's sessions.
+  let session_prototype = {"28/11/2020": [
+     {"session_time": 30, 
      "start_time": "15:37", 
-     "finish_time:":"16:07",
-     "project_name": "none" 
-    }, 
-    "..."]}
+     "finish_time":"16:07",
+     "project_name": null 
+    },
+    {"session_time": 45, 
+    "start_time": "16:30", 
+    "finish_time":"17:15",
+    "project_name": null 
+    } 
+    ]}
+    // Retrieving a specific date give me an array consist of session objects.
+    // I need to push completed session objects to this array
+    // Then I need to update the local storage.
+  
+  //Display sessions as list items
+  // TODO -> This should only repeat when localStorage is updated, not in each render.
+  const session_display = [];
+  // const ss = session_prototype["28/11/2020"]
+  const ss = JSON.parse(sessions);
+  console.log("session_prototype is: ", session_prototype);
+  for (let i in ss){
+    const session = ss[i]
+    console.log(session);
+    session_display.push(
+        <li>{session["start_time"]} - {session["finish_time"]} = {session["session_time"]} min </li>
+    );
+  }
 
   let arr = {"minutes": 5, "time": "16:07"};
   function addSession(){
     console.log("Session is added");
-    localStorage.setItem("sessions", JSON.stringify(arr));
+    localStorage.setItem("sessions", JSON.stringify(session_prototype));
     setSessions(localStorage.getItem("sessions"));
   }
   function removeSession(){
@@ -44,30 +109,32 @@ function Sessions(){
 
   return(
     <div className="session-border">
-      <div className="session-header">
-        <h2>Sessions</h2>
-      </div>
+      <h2>Sessions</h2>
+      <div>{today}</div>
       <div className="sessions">
-      test
-      <br/>
-      {sessions}
-      <div>
-      <button className="btn btn-info btn-sm" onClick={addSession}>Add</button>
-      <button className="btn btn-info btn-sm" onClick={removeSession}>Remove</button>
-      </div>
+        <ul>
+        {session_display}
+        </ul>
+        <div>
+        <button className="btn btn-info btn-sm" onClick={addSession}>Add</button>
+        <button className="btn btn-info btn-sm" onClick={removeSession}>Remove</button>
+        </div>
       </div>
     </div>
   )
 }
 
 function Timer(){
-  const starter_session = localStorage.getItem("starterminutes");
+
   const [seconds, setSeconds] = useState(0);
+  // Set up starter minutes utilizing localStorage
+  const starter_session = localStorage.getItem("starterminutes");
   let starter = 5;
   if (starter_session){
     starter = parseInt(starter_session);
   }
   const [starterminutes, setStarterMinutes] = useState(starter);
+
   const [minutes, setMinutes] = useState(starterminutes);
   const [intervalID, setintervalID] = useState(null);
 
@@ -81,6 +148,7 @@ function Timer(){
   let endString = null;
   let startString = null;
 
+  // const today = "28/11/2020";
   // var alarm = new Howl({
   //   src: [{soundfile}]
   // });
@@ -103,7 +171,7 @@ function Timer(){
     if (isOn === false){
       setintervalID(setInterval(() => {
         setSeconds(c => c - 1);
-        console.log("interval is triggered");
+        //console.log("interval is triggered");
       }, 1000));
       setOnOff(true);
       completedOnOff(false);
@@ -123,21 +191,47 @@ function Timer(){
   console.log(seconds);
 
   if (minutes >= 1 && seconds < 0 && isOn === true){
-    console.log("below 1 minute");
+    console.log("below 0 seconds");
     setSeconds(59);
     setMinutes(m => (m-1));
   }
+  // session ends after completion
   else if (minutes <= 0 && seconds <= 0 && isOn === true){
     clearInterval(intervalID);
-    console.log("interval is cleaned");
-    console.log("Session is completed");
+    //console.log("interval is cleaned");
+    //console.log("Session is completed");
     setSeconds(0);
     setMinutes(starterminutes);
     setOnOff(false);
     completedOnOff(true);
-    setEndTime(new Date());
+    const end = new Date();
+    setEndTime(end);
+
+    // record session to localStorage TODO
+    // This stores the data TWICE for some reason
+    // It turns out STRICT MODE was causing this.
+    // It renders components twice when they have state methods.
+    if (!localStorage.getItem(today)){
+      localStorage.setItem(today, "[]");
+    }
+    const all_sessions_today = JSON.parse(localStorage.getItem(today));
+    console.log("all_sessions before adding last one:", all_sessions_today);
+
+    startString = getHHMM(startTime);
+    endString = getHHMM(end);
+    const completed_session = {
+      "session_time": starterminutes,
+      "start_time": startString,
+      "finish_time": endString,
+      "project_name": null
+    };
+    all_sessions_today.push(completed_session);
+    console.log("all_sessions after adding last one:", all_sessions_today);
+    localStorage.setItem(today, JSON.stringify(all_sessions_today));
+
   }
 
+  // Adds a zero to display when seconds are below 10
   if (minutes >=1 && seconds < 10){
     if (zero === null){
       setZero(0);
@@ -165,28 +259,10 @@ function Timer(){
     }
   }
 
-  // Format ending and starting time HH/MM by getting Date object
-  function getHHMM(date){
-    let hh = null;
-    let mm = null;
-    hh = date.getHours();
-    mm = date.getMinutes();
-
-    if (mm < 10){
-      mm = "0" + mm;
-    }
-    if (hh < 10){
-      hh = "0" + hh;
-    }
-    let end_str = hh + ":" + mm;
-    return end_str;
-  }
-
-  if (isCompleted){
-    startString = getHHMM(startTime);
-    endString = getHHMM(endTime);
-  }
-  
+  endString = getHHMM(endTime);
+  // console.log(startString);
+  // console.log(endString);
+  console.log("BEFORE RETURN localstorage: ", localStorage.getItem(today));
 
   return (
     <div>
@@ -225,7 +301,7 @@ class TimerClass extends React.Component {
         this.setState({
           start: this.state.start -1
         });
-        console.log("interval is triggered");
+        // console.log("interval is triggered");
       }, 1000);
       this.setState({
         intervalID: intervalID,
@@ -267,6 +343,7 @@ class TimerClass extends React.Component {
     )
   }
 }
+
 
 
 export default App;

@@ -46,18 +46,14 @@ input[disabled] {
   height: 100%;
   position: fixed;
   left: 5px;
-  word-wrap: break-word;
-  
 }
-.session-header {
-  position: absolute;
-  top:10%;
-  left: 2%;
-  border-bottom: 3px solid white;
-  
-}
+
 .sessions{
-  position: absolute;
-  top:20%;
-  left: 2%;
+  position: flex;
+  flex-wrap: wrap;
+
+}
+ul{
+  position: relative;
+  right: 20px;
 }
