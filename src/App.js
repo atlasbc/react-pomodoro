@@ -5,13 +5,25 @@ import { Howl, Howler } from 'howler';
 
 function App() {
 	return (
-		<div className="bg-indigo-100 mx-auto">
-			<header className="bg-indigo-500">Pomodoro</header>
-			<div className="App-header">
-				{/* <h3>With Class</h3>
-      <TimerClass/> */}
-				<Timer />
-				<Sessions />
+		<div className="bg-indigo-100 h-screen w-screen overflow-auto">
+			<header className="bg-indigo-500 h-20 text-center text-indigo-200 text-4xl">
+				Start a new session
+			</header>
+			<div className="flex h-full">
+				<div className="w-1/4 h-full">
+					<div className="w-1/2  m-auto ">
+						<Sessions />
+					</div>
+				</div>
+
+				<div className="w-3/4 h-full ">
+					<div className="w-1/2 h-1/2 m-auto ">
+						<Timer />
+					</div>
+				</div>
+			</div>
+			<div className="bg-indigo-500 h-20 w-full text-indigo-200 text-center">
+				Footer
 			</div>
 		</div>
 	);
@@ -97,7 +109,8 @@ function Sessions() {
 		console.log(session);
 		session_display.push(
 			<li>
-				{session['start_time']} - {session['finish_time']} = {session['session_time']} min{' '}
+				{session['start_time']} - {session['finish_time']} ={' '}
+				{session['session_time']} min{' '}
 			</li>
 		);
 	}
@@ -105,7 +118,7 @@ function Sessions() {
 	let arr = { minutes: 5, time: '16:07' };
 	function addSession() {
 		console.log('Session is added');
-		localStorage.setItem('sessions', JSON.stringify(session_prototype));
+		localStorage.setItem('sessions', JSON.stringify(arr));
 		setSessions(localStorage.getItem('sessions'));
 	}
 	function removeSession() {
@@ -115,16 +128,22 @@ function Sessions() {
 	}
 
 	return (
-		<div className="session-border">
+		<div className="flex-column">
 			<h2>Sessions</h2>
 			<div>{today}</div>
 			<div className="sessions">
 				<ul>{session_display}</ul>
 				<div>
-					<button className="btn btn-info btn-sm" onClick={addSession}>
+					<button
+						className="btn btn-info btn-sm"
+						onClick={addSession}
+					>
 						Add
 					</button>
-					<button className="btn btn-info btn-sm" onClick={removeSession}>
+					<button
+						className="btn btn-info btn-sm"
+						onClick={removeSession}
+					>
 						Remove
 					</button>
 				</div>
@@ -269,25 +288,38 @@ function Timer() {
 	console.log('BEFORE RETURN localstorage: ', localStorage.getItem(today));
 
 	return (
-		<div>
+		<div className="flex">
 			{minutes ? (
-				<h1>
+				<h1 className="text-4xl pt-4 pb-2">
 					{isOn ? (
 						minutes
 					) : (
-						<input min="1" max="60" onBlur={handleSessionTime} defaultValue={starterminutes} />
+						<input
+							min="1"
+							max="60"
+							onBlur={handleSessionTime}
+							defaultValue={starterminutes}
+							className="w-10 bg-indigo-100 text-center"
+						/>
 					)}{' '}
 					m : {zero}
 					{seconds} s
 				</h1>
 			) : (
-				<h1>{seconds} s </h1>
+				<h1 className="text-4xl pt-4 pb-2">{seconds} s </h1>
 			)}
 
-			<button onClick={handleTimer} className="btn btn-info btn-sm">
+			<button
+				onClick={handleTimer}
+				className="bg-indigo-500 hover:bg-indigo-700 text-gray-300 w-16 h-8 mt-6 ml-6 text-xl border-2 rounded-lg font-semibold focus:outline-none"
+			>
 				{isOn ? 'Reset' : 'Start'}
 			</button>
-			{isCompleted ? <h2>You Completed a Session at {endString}!</h2> : ''}
+			{isCompleted ? (
+				<h2>You Completed a Session at {endString}!</h2>
+			) : (
+				''
+			)}
 			{/* <button onClick={playAlarm} className="btn btn-info btn-sm">
             Alarm
             </button> */}
@@ -344,10 +376,17 @@ class TimerClass extends React.Component {
 		return (
 			<div>
 				<h1>{this.state.start}</h1>
-				<button onClick={this.handleTimer} className="btn btn-info btn-sm">
+				<button
+					onClick={this.handleTimer}
+					className="bg-indigo-300 border-gray-100"
+				>
 					{this.state.isOn ? 'Reset' : 'Start'}
 				</button>
-				{this.state.isCompleted ? <h2>You Completed a Session!</h2> : ''}
+				{this.state.isCompleted ? (
+					<h2>You Completed a Session!</h2>
+				) : (
+					''
+				)}
 			</div>
 		);
 	}
