@@ -5,26 +5,19 @@ import { Howl, Howler } from 'howler';
 
 function App() {
 	return (
-		<div className="bg-indigo-100 h-screen w-screen overflow-auto">
-			<header className="bg-indigo-500 h-20 text-center text-indigo-200 text-4xl">
-				Start a new session
-			</header>
-			<div className="flex h-full">
-				<div className="w-1/4 h-full">
-					<div className="w-1/2  m-auto ">
-						<Sessions />
-					</div>
-				</div>
-
-				<div className="w-3/4 h-full ">
-					<div className="w-1/2 h-1/2 m-auto ">
-						<Timer />
-					</div>
+		<div>
+			<div className="bg-yellow-50 bg-fabric">
+				{/* <header className="bg-indigo-500 h-1/6 text-center py-6 text-indigo-200 text-2xl">
+					Start a new session
+				</header> */}
+				<div className="grid grid-cols-4 h-screen w-full">
+					<Sessions />
+					<Timer />
 				</div>
 			</div>
-			<div className="bg-indigo-500 h-20 w-full text-indigo-200 text-center">
+			<footer className="bg-comp5 bg-paper text-gray-600 py-2 h-14 text-center w-full font-montserrat">
 				Footer
-			</div>
+			</footer>
 		</div>
 	);
 }
@@ -128,8 +121,8 @@ function Sessions() {
 	}
 
 	return (
-		<div className="flex-column">
-			<h2>Sessions</h2>
+		<div className="flex-column self-center font-montserrat col-span-1 h-auto text-xl bg-comp4 bg-paper text-gray-600 text-center mx-4 my-4 rounded-xl shadow-2xl">
+			<h2 className="text-4xl">Sessions</h2>
 			<div>{today}</div>
 			<div className="sessions">
 				<ul>{session_display}</ul>
@@ -286,110 +279,119 @@ function Timer() {
 	// console.log(startString);
 	// console.log(endString);
 	console.log('BEFORE RETURN localstorage: ', localStorage.getItem(today));
-
+	// TODO INPUT HEIGHT CHANGES WHEN BUTTON IS CLICKED WHICH CAUSES BUTTON TO MOVE UPWARDS
 	return (
-		<div className="flex">
-			{minutes ? (
-				<h1 className="text-4xl pt-4 pb-2">
-					{isOn ? (
-						minutes
-					) : (
-						<input
-							min="1"
-							max="60"
-							onBlur={handleSessionTime}
-							defaultValue={starterminutes}
-							className="w-10 bg-indigo-100 text-center"
-						/>
-					)}{' '}
-					m : {zero}
-					{seconds} s
-				</h1>
-			) : (
-				<h1 className="text-4xl pt-4 pb-2">{seconds} s </h1>
-			)}
+		<div className="flex-col col-span-2 m-auto">
+			<div className="flex-col text-center box-border w-80 h-auto text-gray-600">
+				{minutes ? (
+					<div className="text-6xl w-full box-border h-full font-cursive">
+						{isOn ? (
+							<span className="inline-block w-16 h-full">
+								{minutes}
+							</span>
+						) : (
+							<input
+								min="1"
+								max="60"
+								onBlur={handleSessionTime}
+								defaultValue={starterminutes}
+								className="w-16 bg-yellow-50 bg-fabric h-full text-center box-border"
+							/>
+						)}
+						<span className="h-full">
+							{' '}
+							m : {zero}
+							{seconds} s
+						</span>
+					</div>
+				) : (
+					<div className="text-6xl h-auto font-cursive">
+						{seconds} s{' '}
+					</div>
+				)}
 
-			<button
-				onClick={handleTimer}
-				className="bg-indigo-500 hover:bg-indigo-700 text-gray-300 w-16 h-8 mt-6 ml-6 text-xl border-2 rounded-lg font-semibold focus:outline-none"
-			>
-				{isOn ? 'Reset' : 'Start'}
-			</button>
-			{isCompleted ? (
-				<h2>You Completed a Session at {endString}!</h2>
-			) : (
-				''
-			)}
-			{/* <button onClick={playAlarm} className="btn btn-info btn-sm">
+				<button
+					onClick={handleTimer}
+					className="font-montserrat bg-comp5 bg-absurdity hover:bg-comp1 text-gray-600 border-gray-600 border-solid w-16 h-auto text-xl border-2 rounded-lg focus:outline-none"
+				>
+					{isOn ? 'Reset' : 'Start'}
+				</button>
+				{isCompleted ? (
+					<h2>You Completed a Session at {endString}!</h2>
+				) : (
+					''
+				)}
+				{/* <button onClick={playAlarm} className="btn btn-info btn-sm">
             Alarm
             </button> */}
+			</div>
 		</div>
 	);
 }
 
-class TimerClass extends React.Component {
-	constructor(props) {
-		super(props);
-		this.state = {
-			start: 5,
-			intervalID: null,
-			isOn: false,
-			isCompleted: false
-		};
-		this.handleTimer = this.handleTimer.bind(this);
-	}
+// class TimerClass extends React.Component {
+// 	constructor(props) {
+// 		super(props);
+// 		this.state = {
+// 			start: 5,
+// 			intervalID: null,
+// 			isOn: false,
+// 			isCompleted: false
+// 		};
+// 		this.handleTimer = this.handleTimer.bind(this);
+// 	}
 
-	handleTimer() {
-		if (this.state.isOn === false) {
-			let intervalID = setInterval(() => {
-				this.setState({
-					start: this.state.start - 1
-				});
-				// console.log("interval is triggered");
-			}, 1000);
-			this.setState({
-				intervalID: intervalID,
-				isOn: true,
-				isCompleted: false
-			});
-		} else {
-			clearInterval(this.state.intervalID);
-			this.setState({
-				isOn: false,
-				start: 5
-			});
-		}
-	}
+// 	handleTimer() {
+// 		if (this.state.isOn === false) {
+// 			let intervalID = setInterval(() => {
+// 				this.setState({
+// 					start: this.state.start - 1
+// 				});
+// 				// console.log("interval is triggered");
+// 			}, 1000);
+// 			this.setState({
+// 				intervalID: intervalID,
+// 				isOn: true,
+// 				isCompleted: false
+// 			});
+// 		} else {
+// 			clearInterval(this.state.intervalID);
+// 			this.setState({
+// 				isOn: false,
+// 				start: 5
+// 			});
+// 		}
+// 	}
 
-	componentDidUpdate() {
-		if (this.state.start <= 0 && this.state.isOn === true) {
-			clearInterval(this.state.intervalID);
-			this.setState({
-				isOn: false,
-				start: 5,
-				isCompleted: true
-			});
-		}
-	}
+// 	componentDidUpdate() {
+// 		if (this.state.start <= 0 && this.state.isOn === true) {
+// 			clearInterval(this.state.intervalID);
+// 			this.setState({
+// 				isOn: false,
+// 				start: 5,
+// 				isCompleted: true
+// 			});
+// 		}
+// 	}
 
-	render() {
-		return (
-			<div>
-				<h1>{this.state.start}</h1>
-				<button
-					onClick={this.handleTimer}
-					className="bg-indigo-300 border-gray-100"
-				>
-					{this.state.isOn ? 'Reset' : 'Start'}
-				</button>
-				{this.state.isCompleted ? (
-					<h2>You Completed a Session!</h2>
-				) : (
-					''
-				)}
-			</div>
-		);
-	}
-}
+// 	render() {
+// 		return (
+// 			<div>
+// 				<h1>{this.state.start}</h1>
+// 				<button
+// 					onClick={this.handleTimer}
+// 					className="bg-indigo-300 border-gray-100"
+// 				>
+// 					{this.state.isOn ? 'Reset' : 'Start'}
+// 				</button>
+// 				{this.state.isCompleted ? (
+// 					<h2>You Completed a Session!</h2>
+// 				) : (
+// 					''
+// 				)}
+// 			</div>
+// 		);
+// 	}
+// }
 
 export default App;
